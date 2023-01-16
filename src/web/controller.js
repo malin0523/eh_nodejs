@@ -7,12 +7,12 @@ exports.home = (ctx, next) => {
 exports.page = (ctx, next) => {
     let page = ctx.params.page;
     let content;
-    switch (page){
+    switch (page) {
         case 'terms':
-            content = '이용약관';
+            content = "이용약관";
             break;
         case 'policy':
-            content = '개인정보 처리 방침';
+            content = "개인정보 처리 방침";
             break;
     }
     ctx.render('index', {content});
