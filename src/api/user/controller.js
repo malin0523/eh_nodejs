@@ -11,8 +11,17 @@ exports.info = (ctx, next) => {
 
 //회원정보 처리 모듈
 exports.register = async(ctx,next) => {
-    let token = await generteToken({name : 'my-name'});
-    ctx.body = token;
+    let {email, password, name} = ctx.request.body;
+    
+    let {affectedRows} = await this.register(email, password, name);
+
+    if (affectedRows > 0){
+        let token = await generteToken({name});
+        ctx.body = token;
+    }
+    else {
+        ctx.body = {result : 'FAIL'};
+    }
 }
 
 //로그인 모듈
