@@ -12,8 +12,9 @@ exports.info = (ctx, next) => {
 //회원정보 처리 모듈
 exports.register = async(ctx,next) => {
     let {email, password, name} = ctx.request.body;
-    
-    let {affectedRows} = await this.register(email, password, name);
+    let result = crypto.pbkdf2Sync(password, process.env.APP_KEY, 50, 255, 'sha512'); //0117 비밀번호 암호화 과정 추가
+
+    let {affectedRows} = await this.register(email, result.toString('base64'), name);
 
     if (affectedRows > 0){
         let token = await generteToken({name});
@@ -26,16 +27,19 @@ exports.register = async(ctx,next) => {
 
 //로그인 모듈
 exports.login = async (ctx,next) => {
-    let {id, pw} = ctx.request.body;
-    let result = "";
+    let {email, password} = ctx.request.body;
+    let result = crypto.pbkdf2Sync(password, process.env.APP_KEY, 50, 255, 'sha512');
 
-    if (id === 'admin' && pw === '1234'){
-        result = await generteToken({name : 'abc'});
+    let item = await login(email, result.toString('base64'));
+
+    if (item == null){
+        ctx.body = {result : 'FAIL'};
+        
     }
     else{
-        result = "아이디 혹은 패스워드가 틀립니다 !!";
+        let token = await generteToken({name : item.name});
+        ctx.body = token;
     }
-    ctx.body = token;
 }
 /**
  * jwt 토큰 생성

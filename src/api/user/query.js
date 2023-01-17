@@ -10,3 +10,14 @@ exports.register = async (email, password, name) => {
     const query = 'INSERT INTO user (email, password, name) VALUES (?,?,?)';
     return await pool(query, [email, password, name]);
 }
+
+/**
+ * 로그인 쿼리
+ * @param {string} email 
+ * @param {string} password 
+ * @returns 
+ */
+exports.login = async (email, password) => {
+    const query = 'SELECT * FROM user WHERE email = ? AND password = ?';
+    return (result.length < 0) ? null : result[0]; 
+}
